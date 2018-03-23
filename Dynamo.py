@@ -34,42 +34,43 @@ def MakeSeed(Seed,Length):
 
 def MakePassword(Init1,Init2):
     #Making Password (finding trigraphs of Init1 and Init2
+    Password = []
     if len(Init1) == len(Init2):
         for x in range(len(Init1)):
             Password.append(Diana(Init1[x],Init2[x]))
     else:
-        print("Inits not of the same length, quitting...")
+        raise ValueError("Inits are not of the same length")
     return "".join(Password)
 
 def MakeMask(Password,Seed):
+    Mask = []
     for x in range(len(Seed)):
         Mask.append(Diana(Password[x], Seed[x]))
     return "".join(Mask)
 
 def Encrypt(Mask,Text,Keystream):
+    Ciphertext = []
     for x in range(len(Text)):
         Ciphertext.append(Diana(Text[x],Keystream[x]))
     return Ciphertext
 
 
-Alphabet1 = list("BULSKCQHTGYOVPFZRMEJAWDNXI")
-Alphabet2 = list("ZTNQCOFEAGDMWHBRLKISXJPVYU")
+Alphabet1 = list("GPLUCZKOWXBDEQNVSHTAMRJIFY")
+Alphabet2 = list("WZIFNROTAXSLPGVYDJUMEHBQKC")
 
-Length = 9
-Location = 17
+Length = 8
+Location = 6
 
-Password = []
-Mask = []
-Ciphertext = []
 
-Text = OnlyAZ("All human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.")
+
+Text = OnlyAZ("GKGAOVGTKOTFLXVXHABPWVOWZEOUIWJ")
 
 #Making Inits under chosen starting location and length
 Init1 = Alphabet1[Location:Location+Length]
 Init2 = Alphabet2[Location:Location+Length]
 
 Password = MakePassword(Init1,Init2)
-Seed = MakeSeed("KJVAOZNYR",Length)
+Seed = MakeSeed("YUKJZIVZ",Length)
 Mask = MakeMask(Password,Seed)
 Keystream = MakeKeystream(Seed)
 Ciphertext = Encrypt(Mask,Text,Keystream)
