@@ -7,7 +7,7 @@ def Diana(Text, Key):
 def CodeGroup(Text, Size):
         return " ".join("".join(Text[i:i+Size]) for i in range(0, len(Text), Size))
 
-def MakeKeystream(Seed):
+def MakeKeystream(Seed,Text):
     RNG = list("".join(Seed)) + [''] * len(Text)
     for x in range(len(Text)):
         RNG[x+len(Seed)]=(Diana(RNG[x],RNG[x+1]))
@@ -28,6 +28,14 @@ def MakeSeed(Seed,Length):
     if Seed == []:
         for x in range(Length):
             Seed.append(random.choice(ascii_uppercase))
+        return "".join(Seed)
+    else:
+        return "".join(Seed)
+    
+def GetSeed(Mask,Password,Length,Seed):
+    if Seed == []:
+        for x in range(Length):
+            Seed.append(Diana(Mask[x],Password[x]))
         return "".join(Seed)
     else:
         return "".join(Seed)
@@ -61,28 +69,47 @@ Alphabet2 = list("WZIFNROTAXSLPGVYDJUMEHBQKC")
 Length = 8
 Location = 6
 
-
-
-Text = OnlyAZ("GKGAOVGTKOTFLXVXHABPWVOWZEOUIWJ")
-
+Text = OnlyAZ("""HEZWP ZXAUQ BPTBP TLPMP JRYTV UKBEF WXDCK OQMZT UBHML GEMCG ABVXH ZNBOW YQSFFU JOVUI PGEGH UXKKO PKJDO RTSGD V""")
 #Making Inits under chosen starting location and length
 Init1 = Alphabet1[Location:Location+Length]
 Init2 = Alphabet2[Location:Location+Length]
 
-Password = MakePassword(Init1,Init2)
-Seed = MakeSeed("YUKJZIVZ",Length)
-Mask = MakeMask(Password,Seed)
-Keystream = MakeKeystream(Seed)
-Ciphertext = Encrypt(Mask,Text,Keystream)
 
 
-print("Init1:      "+"".join(Init1))
-print("Init2:      "+"".join(Init2))
-print("")
-print("Password:   "+Password)
-print("Seed:       "+Seed)
-print("Mask:       "+Mask)
-print("")
-print("Input:      "+CodeGroup((Text),5))
-print("Keystream:  "+CodeGroup(Keystream,5))
-print("Output:     "+CodeGroup("".join(Ciphertext),5))
+def Encipher(Text):
+    Text=OnlyAZ(Text)
+    Password = MakePassword(Init1,Init2)
+    Seed = MakeSeed("",Length)
+    Mask = MakeMask(Password,Seed)
+    Keystream = MakeKeystream(Seed,Text)
+    Ciphertext = Encrypt(Mask,Text,Keystream)
+    print("Init1:      "+"".join(Init1))
+    print("Init2:      "+"".join(Init2))
+    print("")
+    print("Password:   "+Password)
+    print("Seed:       "+Seed)
+    print("Mask:       "+Mask)
+    print("")
+    print("Input:      "+CodeGroup((Text),5))
+    print("Keystream:  "+CodeGroup(Keystream,5))
+    print("Output:     "+CodeGroup("".join(Ciphertext),5))
+    print("w/ Mask:    "+CodeGroup("".join(Mask)+"".join(Ciphertext),5))
+
+def Decipher(Text):
+    Text=OnlyAZ(Text)
+    Password = MakePassword(Init1,Init2)
+    Mask = Text[0:Length]
+    Seed = GetSeed(Mask, Password, Length,[])
+    Text = Text[Length:]
+    Keystream = MakeKeystream(Seed,Text)
+    Plaintext = Encrypt(Mask,Text,Keystream)
+    print("Init1:      "+"".join(Init1))
+    print("Init2:      "+"".join(Init2))
+    print("")
+    print("Password:   "+Password)
+    print("Mask:       "+Mask)
+    print("Seed:       "+Seed)
+    print("")
+    print("Input:      "+CodeGroup((Text),5))
+    print("Keystream:  "+CodeGroup(Keystream,5))
+    print("Output:     "+CodeGroup("".join(Plaintext),5))
