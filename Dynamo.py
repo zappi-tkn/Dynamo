@@ -62,24 +62,14 @@ def Encrypt(Mask,Text,Keystream):
         Ciphertext.append(Diana(Text[x],Keystream[x]))
     return Ciphertext
 
-
-Alphabet1 = list("GPLUCZKOWXBDEQNVSHTAMRJIFY")
-Alphabet2 = list("WZIFNROTAXSLPGVYDJUMEHBQKC")
-
-Length = 8
-Location = 6
-
-Text = OnlyAZ("""HEZWP ZXAUQ BPTBP TLPMP JRYTV UKBEF WXDCK OQMZT UBHML GEMCG ABVXH ZNBOW YQSFFU JOVUI PGEGH UXKKO PKJDO RTSGD V""")
-#Making Inits under chosen starting location and length
-Init1 = Alphabet1[Location:Location+Length]
-Init2 = Alphabet2[Location:Location+Length]
-
-
-
-def Encipher(Text):
+def Encipher(Alphabet1,Alphabet2,Location,Length,Text,Seed=""):
+    Location = Location - 1
+    Init1 = Alphabet1[Location:Location+Length]
+    Init2 = Alphabet2[Location:Location+Length]
+    
     Text=OnlyAZ(Text)
     Password = MakePassword(Init1,Init2)
-    Seed = MakeSeed("",Length)
+    Seed = MakeSeed(Seed,Length)
     Mask = MakeMask(Password,Seed)
     Keystream = MakeKeystream(Seed,Text)
     Ciphertext = Encrypt(Mask,Text,Keystream)
@@ -95,7 +85,11 @@ def Encipher(Text):
     print("Output:     "+CodeGroup("".join(Ciphertext),5))
     print("w/ Mask:    "+CodeGroup("".join(Mask)+"".join(Ciphertext),5))
 
-def Decipher(Text):
+def Decipher(Alphabet1,Alphabet2,Location,Length,Text):
+    Location = Location - 1
+    Init1 = Alphabet1[Location:Location+Length]
+    Init2 = Alphabet2[Location:Location+Length]
+    
     Text=OnlyAZ(Text)
     Password = MakePassword(Init1,Init2)
     Mask = Text[0:Length]
